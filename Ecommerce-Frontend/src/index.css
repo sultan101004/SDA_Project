@@ -683,3 +683,322 @@ h1, h2, h3, h4, h5, h6 {
 .bg-brown {
   background-color: var(--dark-brown) !important;
 }
+
+/* ============================================
+   Booking Page Styles - Complete
+   ============================================ */
+
+/* Booking Steps Container */
+.booking-steps-container {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0;
+}
+
+.booking-steps {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.booking-step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.5);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.booking-step::after {
+  content: '';
+  position: absolute;
+  right: -20px;
+  width: 20px;
+  height: 2px;
+  background: var(--light-brown);
+}
+
+.booking-step:last-child::after {
+  display: none;
+}
+
+.booking-step.active {
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+  box-shadow: 0 4px 15px rgba(201, 162, 39, 0.4);
+}
+
+.booking-step.active .booking-step-number {
+  background: var(--white);
+  color: var(--dark-brown);
+}
+
+.booking-step.active .booking-step-label {
+  color: var(--dark-brown);
+  font-weight: 600;
+}
+
+.booking-step.completed {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+}
+
+.booking-step.completed .booking-step-number {
+  background: var(--white);
+  color: var(--success);
+}
+
+.booking-step.completed::after {
+  background: var(--success);
+}
+
+.booking-step-number {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background: var(--light-brown);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.booking-step-label {
+  font-size: 14px;
+  color: var(--gray);
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+/* Event Card Styles */
+.event-card {
+  border-radius: 15px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  background: var(--white);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.event-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+}
+
+.event-card.selected {
+  border: 2px solid var(--gold);
+  box-shadow: 0 8px 25px rgba(201, 162, 39, 0.3);
+}
+
+.event-card .card-title {
+  font-family: 'Playfair Display', serif;
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+}
+
+.event-card .card-text {
+  font-size: 0.9rem;
+  color: var(--gray);
+  line-height: 1.5;
+}
+
+/* Form Styles for Booking */
+.glass-card .form-label {
+  font-weight: 600;
+  color: var(--dark-brown);
+  margin-bottom: 8px;
+}
+
+.glass-card .form-control,
+.glass-card .form-select {
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  padding: 12px 15px;
+  transition: all 0.3s ease;
+  background: var(--white);
+}
+
+.glass-card .form-control:focus,
+.glass-card .form-select:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.2);
+  outline: none;
+}
+
+/* Booking Summary Card */
+.booking-summary {
+  background: linear-gradient(135deg, var(--dark-brown) 0%, #6D4C41 100%);
+  border-radius: 15px;
+  padding: 20px;
+  color: var(--white);
+}
+
+.booking-summary h5 {
+  color: var(--gold);
+  font-family: 'Playfair Display', serif;
+  margin-bottom: 15px;
+}
+
+.booking-summary p {
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+}
+
+.booking-summary .total-price {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--gold);
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  padding-top: 15px;
+  margin-top: 15px;
+}
+
+/* Loading Spinner */
+.booking-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: 15px;
+}
+
+.booking-loading .spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+/* Responsive Styles for Booking */
+@media (max-width: 768px) {
+  .booking-steps {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .booking-step {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .booking-step::after {
+    display: none;
+  }
+
+  .booking-step-label {
+    font-size: 16px;
+  }
+
+  .booking-step-number {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+
+  .glass-card {
+    padding: 20px;
+  }
+
+  .event-card .card-img-top {
+    height: 120px !important;
+  }
+
+  .section-title {
+    font-size: 1.8rem !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .booking-steps-container {
+    padding: 10px 0;
+  }
+
+  .glass-card {
+    padding: 15px;
+    border-radius: 15px;
+  }
+
+  .booking-summary {
+    padding: 15px;
+  }
+
+  .booking-summary .total-price {
+    font-size: 1.2rem;
+  }
+}
+
+/* Animation Keyframes */
+@keyframes pulse-gold {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(201, 162, 39, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(201, 162, 39, 0);
+  }
+}
+
+.btn-gold:active {
+  animation: pulse-gold 0.5s;
+}
+
+/* Success Message Animation */
+.booking-success {
+  text-align: center;
+  padding: 40px;
+}
+
+.booking-success .success-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--success) 0%, #20c997 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  font-size: 40px;
+  color: var(--white);
+  animation: scale-in 0.5s ease;
+}
+
+@keyframes scale-in {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Price Display */
+.price-tag {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+  color: var(--dark-brown);
+  padding: 5px 15px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* Empty State */
+.booking-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--gray);
+}
+
+.booking-empty i {
+  font-size: 3rem;
+  color: var(--light-brown);
+  margin-bottom: 15px;
+}
