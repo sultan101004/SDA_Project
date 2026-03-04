@@ -1,12 +1,14 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useContext, useEffect } from "react";
 import { useState } from "react";
+import { Container, Row, Col, Button } from "react-bootstrap";
 import AppContext from "../Context/Context";
 import axios from "../axios";
 import UpdateProduct from "./UpdateProduct";
+
 const Product = () => {
   const { id } = useParams();
-  const { data, addToCart, removeFromCart, cart, refreshData } =
+  const { addToCart, removeFromCart, cart, refreshData } =
     useContext(AppContext);
   const [product, setProduct] = useState(null);
   const [imageUrl, setImageUrl] = useState("");
@@ -15,9 +17,7 @@ const Product = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8080/api/product/${id}`
-        );
+        const response = await axios.get(`/product/${id}`);
         setProduct(response.data);
         if (response.data.imageName) {
           fetchImage();
@@ -28,11 +28,14 @@ const Product = () => {
     };
 
     const fetchImage = async () => {
-      const response = await axios.get(
-        `http://localhost:8080/api/product/${id}/image`,
-        { responseType: "blob" }
-      );
-      setImageUrl(URL.createObjectURL(response.data));
+      try {
+        const response = await axios.get(`/product/${id}/image`, {
+          responseType: "blob",
+        });
+        setImageUrl(URL.createObjectURL(response.data));
+      } catch (error) {
+        console.error("Error fetching image:", error);
+      }
     };
 
     fetchProduct();
@@ -40,7 +43,7 @@ const Product = () => {
 
   const deleteProduct = async () => {
     try {
-      await axios.delete(`http://localhost:8080/api/product/${id}`);
+      await axios.delete(`/product/${id}`);
       removeFromCart(id);
       console.log("Product deleted successfully");
       alert("Product deleted successfully");
@@ -59,114 +62,142 @@ const Product = () => {
     addToCart(product);
     alert("Product added to cart");
   };
+
   if (!product) {
     return (
-      <h2 className="text-center" style={{ padding: "10rem" }}>
-        Loading...
-      </h2>
+      <div className="product-detail-container">
+        <h2 className="text-center">Loading...</h2>
+      </div>
     );
   }
+
   return (
-    <>
-      <div className="containers" style={{ display: "flex" }}>
-        <img
-          className="left-column-img"
-          src={imageUrl}
-          alt={product.imageName}
-          style={{ width: "50%", height: "auto" }}
-        />
-
-        <div className="right-column" style={{ width: "50%" }}>
-          <div className="product-description">
-            <div style={{display:'flex',justifyContent:'space-between' }}>
-            <span style={{ fontSize: "1.2rem", fontWeight: 'lighter' }}>
-              {product.category}
-            </span>
-            <p className="release-date" style={{ marginBottom: "2rem" }}>
-              
-              <h6>Listed : <span> <i> {new Date(product.releaseDate).toLocaleDateString()}</i></span></h6>
-              {/* <i> {new Date(product.releaseDate).toLocaleDateString()}</i> */}
-            </p>
+    <div className="product-detail-container">
+      <Container>
+        <Row className="align-items-start">
+          {/* Product Image */}
+          <Col lg={6} md={12} className="mb-4 mb-lg-0">
+            <div className="product-image-container">
+              {imageUrl ? (
+                <img
+                  src={imageUrl}
+                  alt={product.imageName || product.name}
+                  className="img-fluid"
+                />
+              ) : (
+                <div
+                  style={{
+                    width: "100%",
+                    height: "400px",
+                    backgroundColor: "#f5f5f5",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderRadius: "10px",
+                  }}
+                >
+                  <span className="text-muted">No Image Available</span>
+                </div>
+              )}
             </div>
-            
-           
-            <h1 style={{ fontSize: "2rem", marginBottom: "0.5rem",textTransform: 'capitalize', letterSpacing:'1px' }}>
-              {product.name}
-            </h1>
-            <i style={{ marginBottom: "3rem" }}>{product.brand}</i>
-            <p style={{fontWeight:'bold',fontSize:'1rem',margin:'10px 0px 0px'}}>PRODUCT DESCRIPTION :</p>
-            <p style={{ marginBottom: "1rem" }}>{product.description}</p>
-          </div>
+          </Col>
 
-          <div className="product-price">
-            <span style={{ fontSize: "2rem", fontWeight: "bold" }}>
-              {"$" + product.price}
-            </span>
-            <button
-              className={`cart-btn ${
-                !product.productAvailable ? "disabled-btn" : ""
-              }`}
-              onClick={handlAddToCart}
-              disabled={!product.productAvailable}
-              style={{
-                padding: "1rem 2rem",
-                fontSize: "1rem",
-                backgroundColor: "#007bff",
-                color: "white",
-                border: "none",
-                borderRadius: "5px",
-                cursor: "pointer",
-                marginBottom: "1rem",
-              }}
-            >
-              {product.productAvailable ? "Add to cart" : "Out of Stock"}
-            </button>
-            <h6 style={{ marginBottom: "1rem" }}>
-              Stock Available :{" "}
-              <i style={{ color: "green", fontWeight: "bold" }}>
-                {product.stockQuantity}
-              </i>
-            </h6>
-          
-          </div>
-          <div className="update-button" style={{ display: "flex", gap: "1rem" }}>
-            <button
-              className="btn btn-primary"
-              type="button"
-              onClick={handleEditClick}
-              style={{
-                padding: "1rem 2rem",
-                fontSize: "1rem",
-                backgroundColor: "#007bff",
-                color: "white",
-                border: "none",
-                borderRadius: "5px",
-                cursor: "pointer",
-              }}
-            >
-              Update
-            </button>
-            {/* <UpdateProduct product={product} onUpdate={handleUpdate} /> */}
-            <button
-              className="btn btn-primary"
-              type="button"
-              onClick={deleteProduct}
-              style={{
-                padding: "1rem 2rem",
-                fontSize: "1rem",
-                backgroundColor: "#dc3545",
-                color: "white",
-                border: "none",
-                borderRadius: "5px",
-                cursor: "pointer",
-              }}
-            >
-              Delete
-            </button>
-          </div>
-        </div>
-      </div>
-    </>
+          {/* Product Info */}
+          <Col lg={6} md={12}>
+            <div className="product-info-container">
+              <div className="product-description">
+                <div className="d-flex justify-content-between align-items-start mb-3">
+                  <span
+                    style={{
+                      fontSize: "1rem",
+                      fontWeight: "500",
+                      color: "#C9A227",
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    {product.category}
+                  </span>
+                  <p className="release-date mb-0">
+                    <small>
+                      Listed:{" "}
+                      <i>
+                        {" "}
+                        {new Date(product.releaseDate).toLocaleDateString()}
+                      </i>
+                    </small>
+                  </p>
+                </div>
+
+                <h1
+                  style={{
+                    fontSize: "2rem",
+                    marginBottom: "0.5rem",
+                    textTransform: "capitalize",
+                    letterSpacing: "1px",
+                  }}
+                >
+                  {product.name}
+                </h1>
+                <p style={{ marginBottom: "1rem", color: "#666" }}>
+                  <i>{product.brand}</i>
+                </p>
+                <p style={{ fontWeight: "600", marginBottom: "0.5rem" }}>
+                  PRODUCT DESCRIPTION :
+                </p>
+                <p style={{ marginBottom: "1rem", lineHeight: "1.6" }}>
+                  {product.description}
+                </p>
+              </div>
+
+              <div className="product-price">
+                <span style={{ fontSize: "2rem", fontWeight: "bold" }}>
+                  {"₹" + product.price?.toLocaleString()}
+                </span>
+
+                <button
+                  className={`cart-btn ${
+                    !product.productAvailable ? "disabled-btn" : ""
+                  }`}
+                  onClick={handlAddToCart}
+                  disabled={!product.productAvailable}
+                >
+                  {product.productAvailable ? "Add to Cart" : "Out of Stock"}
+                </button>
+
+                <p style={{ marginBottom: "0" }}>
+                  Stock Available:{" "}
+                  <span style={{ color: "green", fontWeight: "bold" }}>
+                    {product.stockQuantity}
+                  </span>
+                </p>
+              </div>
+
+              <div className="update-button">
+                <button
+                  className="btn btn-primary"
+                  type="button"
+                  onClick={handleEditClick}
+                >
+                  Update
+                </button>
+                <button
+                  className="btn btn-danger"
+                  type="button"
+                  onClick={deleteProduct}
+                  style={{
+                    backgroundColor: "#dc3545",
+                    color: "white",
+                    border: "none",
+                  }}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </Col>
+        </Row>
+      </Container>
+    </div>
   );
 };
 

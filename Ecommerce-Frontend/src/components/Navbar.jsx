@@ -1,229 +1,170 @@
-import React, { useEffect, useState } from "react";
-import Home from "./Home"
-import axios from "axios";
-// import { json } from "react-router-dom";
-// import { BiSunFill, BiMoon } from "react-icons/bi";
+import React, { useState, useContext, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Container, Nav, Navbar as BSNavbar, Button } from "react-bootstrap";
+import { AuthContext } from "../Context/AuthContext";
+import AppContext from "../Context/Context";
+import {
+  FaUser,
+  FaSignOutAlt,
+  FaBars,
+  FaTimes,
+  FaShoppingCart,
+} from "react-icons/fa";
 
-const Navbar = ({ onSelectCategory, onSearch }) => {
-  const getInitialTheme = () => {
-    const storedTheme = localStorage.getItem("theme");
-    return storedTheme ? storedTheme : "light-theme";
-  };
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [theme, setTheme] = useState(getInitialTheme());
-  const [input, setInput] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
-  const [noResults, setNoResults] = useState(false);
-  const [searchFocused, setSearchFocused] = useState(false);
-  const [showSearchResults,setShowSearchResults] = useState(false)
+const Navbar = () => {
+  const { user, logout, isAdmin } = useContext(AuthContext);
+  const { cart } = useContext(AppContext);
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const navigate = useNavigate();
+
   useEffect(() => {
-    fetchData();
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const fetchData = async (value) => {
-    try {
-      const response = await axios.get("http://localhost:8080/api/products");
-      setSearchResults(response.data);
-      console.log(response.data);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
+  const handleLogout = () => {
+    logout();
+    navigate("/");
   };
 
-  const handleChange = async (value) => {
-    setInput(value);
-    if (value.length >= 1) {
-      setShowSearchResults(true)
-    try {
-      const response = await axios.get(
-        `http://localhost:8080/api/products/search?keyword=${value}`
-      );
-      setSearchResults(response.data);
-      setNoResults(response.data.length === 0);
-      console.log(response.data);
-    } catch (error) {
-      console.error("Error searching:", error);
-    }
-    } else {
-      setShowSearchResults(false);
-      setSearchResults([]);
-      setNoResults(false);
-    }
-  };
-
-  
-  // const handleChange = async (value) => {
-  //   setInput(value);
-  //   if (value.length >= 1) {
-  //     setShowSearchResults(true);
-  //     try {
-  //       let response;
-  //       if (!isNaN(value)) {
-  //         // Input is a number, search by ID
-  //         response = await axios.get(`http://localhost:8080/api/products/search?id=${value}`);
-  //       } else {
-  //         // Input is not a number, search by keyword
-  //         response = await axios.get(`http://localhost:8080/api/products/search?keyword=${value}`);
-  //       }
-
-  //       const results = response.data;
-  //       setSearchResults(results);
-  //       setNoResults(results.length === 0);
-  //       console.log(results);
-  //     } catch (error) {
-  //       console.error("Error searching:", error.response ? error.response.data : error.message);
-  //     }
-  //   } else {
-  //     setShowSearchResults(false);
-  //     setSearchResults([]);
-  //     setNoResults(false);
-  //   }
-  // };
-
-  const handleCategorySelect = (category) => {
-    setSelectedCategory(category);
-    onSelectCategory(category);
-  };
-  const toggleTheme = () => {
-    const newTheme = theme === "dark-theme" ? "light-theme" : "dark-theme";
-    setTheme(newTheme);
-    localStorage.setItem("theme", newTheme);
-  };
-
-  useEffect(() => {
-    document.body.className = theme;
-  }, [theme]);
-
-  const categories = [
-    "Laptop",
-    "Headphone",
-    "Mobile",
-    "Electronics",
-    "Toys",
-    "Fashion",
-  ];
   return (
-    <>
-      <header>
-        <nav className="navbar navbar-expand-lg fixed-top">
-          <div className="container-fluid">
-            <a className="navbar-brand" href="https://www.linkedin.com/in/harish-kumar-gatti-663066249/">
-              HiTeckKart
-            </a>
-            <button
-              className="navbar-toggler"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#navbarSupportedContent"
-              aria-controls="navbarSupportedContent"
-              aria-expanded="false"
-              aria-label="Toggle navigation"
+    <BSNavbar
+      expand="lg"
+      fixed="top"
+      className={`navbar ${scrolled ? "scrolled" : ""}`}
+    >
+      <Container>
+        <BSNavbar.Brand as={Link} to="/">
+          ✨ Evento
+        </BSNavbar.Brand>
+
+        <button
+          className="navbar-toggler"
+          onClick={() => setMobileOpen(!mobileOpen)}
+          style={{
+            background: "transparent",
+            border: "none",
+            color: "#C9A227",
+            fontSize: "1.5rem",
+          }}
+        >
+          {mobileOpen ? <FaTimes /> : <FaBars />}
+        </button>
+
+        <BSNavbar.Collapse in={mobileOpen}>
+          <Nav className="ms-auto align-items-center">
+            <Nav.Link as={Link} to="/" onClick={() => setMobileOpen(false)}>
+              Home
+            </Nav.Link>
+            <Nav.Link
+              as={Link}
+              to="/about"
+              onClick={() => setMobileOpen(false)}
             >
-              <span className="navbar-toggler-icon"></span>
-            </button>
-            <div
-              className="collapse navbar-collapse"
-              id="navbarSupportedContent"
+              About
+            </Nav.Link>
+            <Nav.Link
+              as={Link}
+              to="/services"
+              onClick={() => setMobileOpen(false)}
             >
-              <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-                <li className="nav-item">
-                  <a className="nav-link active" aria-current="page" href="/">
-                    Home
-                  </a>
-                </li>
-                <li className="nav-item">
-                  <a className="nav-link" href="/add_product">
-                    Add Product
-                  </a>
-                </li>
-
-                <li className="nav-item dropdown">
-                  <a
-                    className="nav-link dropdown-toggle"
-                    href="/"
-                    role="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                  >
-                    Categories
-                  </a>
-
-                  <ul className="dropdown-menu">
-                    {categories.map((category) => (
-                      <li key={category}>
-                        <button
-                          className="dropdown-item"
-                          onClick={() => handleCategorySelect(category)}
-                        >
-                          {category}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </li>
-
-                <li className="nav-item"></li>
-              </ul>
-              <button className="theme-btn" onClick={() => toggleTheme()}>
-                {theme === "dark-theme" ? (
-                  <i className="bi bi-moon-fill"></i>
-                ) : (
-                  <i className="bi bi-sun-fill"></i>
-                )}
-              </button>
-              <div className="d-flex align-items-center cart">
-                <a href="/cart" className="nav-link text-dark">
-                  <i
-                    className="bi bi-cart me-2"
-                    style={{ display: "flex", alignItems: "center" }}
-                  >
-                    Cart
-                  </i>
-                </a>
-                {/* <form className="d-flex" role="search" onSubmit={handleSearch} id="searchForm"> */}
-                <input
-                  className="form-control me-2"
-                  type="search"
-                  placeholder="Search"
-                  aria-label="Search"
-                  value={input}
-                  onChange={(e) => handleChange(e.target.value)}
-                  onFocus={() => setSearchFocused(true)} // Set searchFocused to true when search bar is focused
-                  onBlur={() => setSearchFocused(false)} // Set searchFocused to false when search bar loses focus
-                />
-                {showSearchResults && (
-                  <ul className="list-group">
-                    {searchResults.length > 0 ? (  
-                        searchResults.map((result) => (
-                          <li key={result.id} className="list-group-item">
-                            <a href={`/product/${result.id}`} className="search-result-link">
-                            <span>{result.name}</span>
-                            </a>
-                          </li>
-                        ))
-                    ) : (
-                      noResults && (
-                        <p className="no-results-message">
-                          No Prouduct with such Name
-                        </p>
-                      )
-                    )}
-                  </ul>
-                )}
-                {/* <button
-                  className="btn btn-outline-success"
-                  onClick={handleSearch}
+              Services
+            </Nav.Link>
+            <Nav.Link
+              as={Link}
+              to="/packages"
+              onClick={() => setMobileOpen(false)}
+            >
+              Packages
+            </Nav.Link>
+            <Nav.Link
+              as={Link}
+              to="/booking"
+              onClick={() => setMobileOpen(false)}
+            >
+              Book Now
+            </Nav.Link>
+            <Nav.Link
+              as={Link}
+              to="/ai-planner"
+              onClick={() => setMobileOpen(false)}
+            >
+              AI Planner
+            </Nav.Link>
+            <Nav.Link
+              as={Link}
+              to="/feedback"
+              onClick={() => setMobileOpen(false)}
+            >
+              Feedback
+            </Nav.Link>
+            <Nav.Link
+              as={Link}
+              to="/contact"
+              onClick={() => setMobileOpen(false)}
+            >
+              Contact
+            </Nav.Link>
+            <Nav.Link
+              as={Link}
+              to="/products"
+              onClick={() => setMobileOpen(false)}
+            >
+              Products
+            </Nav.Link>
+            <Nav.Link
+              as={Link}
+              to="/cart"
+              onClick={() => setMobileOpen(false)}
+              className="position-relative"
+            >
+              <FaShoppingCart className="me-1" />
+              Cart
+              {cart.length > 0 && (
+                <span
+                  className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark"
+                  style={{ fontSize: "0.7rem" }}
                 >
-                  Search Products
-                </button> */}
-                {/* </form> */}
-                <div />
+                  {cart.reduce((acc, item) => acc + item.quantity, 0)}
+                </span>
+              )}
+            </Nav.Link>
+
+            {isAdmin && (
+              <Nav.Link as={Link} to="/admin" className="text-warning">
+                Admin Dashboard
+              </Nav.Link>
+            )}
+
+            {user ? (
+              <div className="d-flex align-items-center ms-3">
+                <span className="text-white me-2">
+                  <FaUser className="me-1" />
+                  {user.name}
+                </span>
+                <Button
+                  variant="outline-warning"
+                  size="sm"
+                  onClick={handleLogout}
+                >
+                  <FaSignOutAlt /> Logout
+                </Button>
               </div>
-            </div>
-          </div>
-        </nav>
-      </header>
-    </>
+            ) : (
+              <Nav.Link as={Link} to="/login" className="ms-3">
+                <Button variant="warning" className="btn-gold">
+                  Login
+                </Button>
+              </Nav.Link>
+            )}
+          </Nav>
+        </BSNavbar.Collapse>
+      </Container>
+    </BSNavbar>
   );
 };
 

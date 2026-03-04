@@ -101,10 +101,14 @@ public class ProductController {
         }
         
         // Fallback to BLOB data if exists
-        if (product != null && product.getImageDate() != null) {
+        if (product != null && product.getImageData() != null) {
+            String contentType = product.getImageType();
+            if (contentType == null || contentType.isEmpty()) {
+                contentType = "image/jpeg";
+            }
             return ResponseEntity.ok()
-                    .contentType(MediaType.valueOf(product.getImageType("image/jpeg")))
-                    .body(product.getImageDate());
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .body(product.getImageData());
         }
         
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
