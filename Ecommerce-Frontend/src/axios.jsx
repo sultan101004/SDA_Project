@@ -1,7 +1,9 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://localhost:8080/api",
+  // Backend already prefixes routes with /api (e.g. /api/auth/login)
+  // so the base URL should only be the host/port.
+  baseURL: "http://localhost:8080",
 });
 
 // Add token to requests if it exists

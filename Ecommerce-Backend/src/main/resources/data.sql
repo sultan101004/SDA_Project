@@ -1,10 +1,26 @@
+-- Reset seed data (for local/dev)
+-- Keep IDs stable across restarts (H2 file DB) by deleting + resetting identities.
+DELETE FROM bookings;
+DELETE FROM feedback;
+DELETE FROM packages;
+DELETE FROM venues;
+DELETE FROM events;
+DELETE FROM users;
+
+ALTER TABLE bookings ALTER COLUMN id RESTART WITH 1;
+ALTER TABLE feedback ALTER COLUMN id RESTART WITH 1;
+ALTER TABLE packages ALTER COLUMN id RESTART WITH 1;
+ALTER TABLE venues ALTER COLUMN id RESTART WITH 1;
+ALTER TABLE events ALTER COLUMN id RESTART WITH 1;
+ALTER TABLE users ALTER COLUMN id RESTART WITH 1;
+
 -- Admin User (password: admin123)
 INSERT INTO users (name, email, password, phone, role, enabled, created_at) 
-VALUES ('Admin', 'admin@evento.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZRGdjGj/n3.aS5m0q3W4YLjA3ZqAi', '9876543210', 'ADMIN', true, NOW());
+VALUES ('Admin', 'admin@evento.com', '$2a$10$3OFWq9onliqWNXcxfhTc4OBJ6uLNYxIc7lOXkmGTiybPUD82x0W0S', '9876543210', 'ADMIN', true, NOW());
 
 -- Regular User (password: user123)
 INSERT INTO users (name, email, password, phone, role, enabled, created_at) 
-VALUES ('John Doe', 'john@example.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZRGdjGj/n3.aS5m0q3W4YLjA3ZqAi', '9876543211', 'USER', true, NOW());
+VALUES ('Salman', 'salman@gmail.com', '$2a$10$LRpKv20NazQBay.32Srqh.2rMPI.xrJ9py6Bba6zQpn5paUQCK8ye', '9876543211', 'USER', true, NOW());
 
 -- Events
 INSERT INTO events (name, description, event_type, base_price, image_url, active) VALUES 
@@ -26,15 +42,15 @@ INSERT INTO venues (name, address, latitude, longitude, capacity, price_per_hour
 ('Beach Resort', 'Goa, Goa', 15.2993, 74.1240, 150, 30000, 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800', true, 'Beachside venue with sunset views');
 
 -- Packages
-INSERT INTO packages (name, description, price, event_type, features) VALUES 
-('Gold Package', 'Complete wedding package with all amenities', 500000, 'WEDDING', 'Venue, Catering, Decoration, Photography, Music, Florist'),
-('Silver Package', 'Basic wedding package', 300000, 'WEDDING', 'Venue, Catering, Basic Decoration'),
-('Kids Special', 'Birthday package for children', 25000, 'BIRTHDAY', 'Games, Magic Show, Catering, Decorations, Return Gifts'),
-('Adult Elegant', 'Birthday package for adults', 50000, 'BIRTHDAY', 'Catering, DJ, Decorations, Cake'),
-('Corporate Basic', 'Essential corporate event package', 80000, 'CORPORATE', 'Venue, Projector, Sound System, Catering'),
-('Corporate Premium', 'Full corporate event package', 150000, 'CORPORATE', 'Venue, Full AV Equipment, Catering, Photography, Welcome Kit'),
-('Anniversary Special', 'Romantic anniversary package', 75000, 'ANNIVERSARY', 'Venue, Decoration, Cake, Dinner, Music'),
-('Social Plus', 'Social gathering package', 35000, 'SOCIAL_GATHERING', 'Venue, Catering, Basic Decoration, Music');
+INSERT INTO packages (name, description, price, event_type, features, active) VALUES 
+('Gold Package', 'Complete wedding package with all amenities', 500000, 'WEDDING', 'Venue, Catering, Decoration, Photography, Music, Florist', true),
+('Silver Package', 'Basic wedding package', 300000, 'WEDDING', 'Venue, Catering, Basic Decoration', true),
+('Kids Special', 'Birthday package for children', 25000, 'BIRTHDAY', 'Games, Magic Show, Catering, Decorations, Return Gifts', true),
+('Adult Elegant', 'Birthday package for adults', 50000, 'BIRTHDAY', 'Catering, DJ, Decorations, Cake', true),
+('Corporate Basic', 'Essential corporate event package', 80000, 'CORPORATE', 'Venue, Projector, Sound System, Catering', true),
+('Corporate Premium', 'Full corporate event package', 150000, 'CORPORATE', 'Venue, Full AV Equipment, Catering, Photography, Welcome Kit', true),
+('Anniversary Special', 'Romantic anniversary package', 75000, 'ANNIVERSARY', 'Venue, Decoration, Cake, Dinner, Music', true),
+('Social Plus', 'Social gathering package', 35000, 'SOCIAL_GATHERING', 'Venue, Catering, Basic Decoration, Music', true);
 
 -- Feedback
 INSERT INTO feedback (name, event_type, rating, comment, created_at) VALUES 
@@ -45,7 +61,7 @@ INSERT INTO feedback (name, event_type, rating, comment, created_at) VALUES
 ('Meera Singh', 'WEDDING', 5, 'Royal treatment from start to finish. Highly recommended!', NOW());
 
 -- Sample Bookings
-INSERT INTO bookings (event_id, venue_id, package_id, customer_name, customer_email, customer_phone, event_date, guest_count, total_price, status, created_at) VALUES 
-(1, 1, 1, 'Rahul Mehta', 'rahul.mehta@email.com', '9988776655', '2024-12-15', 250, 550000, 'PENDING', NOW()),
-(3, 2, 3, 'Sunita Rao', 'sunita.rao@email.com', '9876543210', '2024-11-20', 30, 30000, 'APPROVED', NOW()),
-(5, 4, 5, 'Corporate Solutions', 'events@corporate.com', '9123456789', '2024-10-25', 150, 95000, 'COMPLETED', NOW());
+INSERT INTO bookings (event_id, venue_id, package_id, user_id, customer_name, customer_email, customer_phone, event_date, guest_count, total_price, status, created_at) VALUES 
+(1, 1, 1, 2, 'Rahul Mehta', 'rahul.mehta@email.com', '9988776655', '2024-12-15', 250, 550000, 'PENDING', NOW()),
+(3, 2, 3, 2, 'Sunita Rao', 'sunita.rao@email.com', '9876543210', '2024-11-20', 30, 30000, 'CONFIRMED', NOW()),
+(5, 4, 5, 1, 'Corporate Solutions', 'events@corporate.com', '9123456789', '2024-10-25', 150, 95000, 'COMPLETED', NOW());
